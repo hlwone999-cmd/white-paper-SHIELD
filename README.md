@@ -159,8 +159,8 @@ The current prototype intentionally focuses on deterministic, testable constrain
 
 Whitepaper
 
-- English — SHIELD Whitepaper v1.0
-- Bahasa Indonesia — SHIELD Whitepaper v1.0
+- [English — SHIELD Whitepaper v1.0](./whitepaper/SHIELD-Whitepaper-EN-v1.0.pdf)
+- [Bahasa Indonesia — SHIELD Whitepaper v1.0](./whitepaper/SHIELD-Whitepaper-ID-v1.0.pdf)
 
 
 ---
