@@ -1,66 +1,181 @@
-## Foundry
+# SHIELD
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Outcome Policy Infrastructure for Autonomous On-Chain Agents
 
-Foundry consists of:
+SHIELD explores an outcome policy layer for autonomous on-chain agents.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+The core thesis is that authorization alone does not guarantee a desired
+economic outcome. SHIELD investigates deterministic transaction policies,
+pre-execution analysis, simulation, and on-chain enforcement.
 
-## Documentation
+> Let agents act. Define what they can change.
 
-https://book.getfoundry.sh/
+---
 
-## Usage
+## Repository Status
 
-### Build
+*Research / Pre-MVP*
 
-```shell
-$ forge build
-```
+This repository contains the SHIELD prototype, technical research,
+experimental validation, and whitepaper materials.
 
-### Test
+---
 
-```shell
-$ forge test
-```
+## Current Prototype
 
-### Format
+The current prototype demonstrates an on-chain enforcement mechanism for
+agent-controlled token swaps through a Safe smart account.
 
-```shell
-$ forge fmt
-```
+The prototype tests:
 
-### Gas Snapshots
+- Maximum token input
+- Allowed router
+- Allowed token pair
+- Agent authorization
+- Policy expiry
+- Minimum output requirement
+- Post-execution balance verification
+- Atomic transaction revert
+- Prevention of agent policy escalation
 
-```shell
-$ forge snapshot
-```
+### Core enforcement contract
 
-### Anvil
+```text
+src/ShieldSwapModule.sol
 
-```shell
-$ anvil
-```
+The module is designed so that the agent cannot directly modify the policy. Policy configuration is restricted to the Safe.
 
-### Deploy
+For swap execution, the module:
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+1. Validates the agent.
+2. Validates policy expiry.
+3. Validates maximum input amount.
+4. Calculates the required minimum output.
+5. Executes the swap through the Safe.
+6. Checks the Safe's token balance before and after execution.
+7. Reverts if the received amount is below the policy requirement.
 
-### Cast
 
-```shell
-$ cast <subcommand>
-```
+---
 
-### Help
+Experimental Validation
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+The B4 experimental validation demonstrates:
+
+Valid execution
+
+A compliant swap is executed successfully when the output satisfies the configured minimum.
+
+Adversarial execution
+
+The mock router can be configured to:
+
+- return an output below the required minimum, and
+- ignore the router-level minimum-output parameter.
+
+In this case SHIELD detects the insufficient output using the Safe's balance delta and reverts the transaction.
+
+The Safe's balances remain unchanged after the failed execution, demonstrating atomic state preservation.
+
+
+---
+
+Project Structure
+
+shield-demo/
+├── src/
+│   ├── DemoToken.sol
+│   ├── MockRouter.sol
+│   ├── ShieldModule.sol
+│   └── ShieldSwapModule.sol
+│
+├── test/
+│   ├── Demo.t.sol
+│   ├── ShieldModule.t.sol
+│   └── ShieldSwapModule.t.sol
+│
+├── script/
+│   ├── Deploy.s.sol
+│   └── DeploySwap.s.sol
+│
+├── docs/
+│   └── ...
+│
+├── evidence/
+│   └── ...
+│
+├── whitepaper/
+│   ├── SHIELD-Whitepaper-EN-v1.0.pdf
+│   └── SHIELD-Whitepaper-ID-v1.0.pdf
+│
+└── foundry.toml
+
+
+---
+
+Build
+
+forge build
+
+Test
+
+forge test
+
+Format
+
+forge fmt
+
+Run Local Ethereum Node
+
+anvil
+
+Deploy
+
+Deployment scripts are located in:
+
+script/
+
+The prototype is intended for local/test environments and is not production-ready or audited.
+
+
+---
+
+Research Focus
+
+SHIELD investigates:
+
+- Deterministic transaction policies
+- Transaction simulation
+- Contract risk intelligence
+- Outcome-aware constraints
+- On-chain enforcement
+- Smart-account integration
+- Autonomous agent security
+
+The current prototype intentionally focuses on deterministic, testable constraints rather than arbitrary natural-language outcome verification.
+
+
+---
+
+Whitepaper
+
+- English — SHIELD Whitepaper v1.0
+- Bahasa Indonesia — SHIELD Whitepaper v1.0
+
+
+---
+
+Important Disclaimer
+
+This repository contains a research prototype.
+
+The contracts have not undergone a production security audit and should not be used to protect real funds.
+
+The mock token and router are intentionally simplified for experimental validation.
+
+
+---
+
+SHIELD
+
+Let agents act. Define what they can change.
