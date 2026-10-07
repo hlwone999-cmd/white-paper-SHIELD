@@ -216,4 +216,22 @@ contract ShieldSwapModuleTest is Test {
 
         module.swap(1_000e6);
     }
+
+    function test_AgentCannotChangeRouterPolicy() public {
+        vm.prank(agent);
+
+        vm.expectRevert(
+            ShieldSwapModule.NotSafe.selector
+        );
+
+        module.setPolicy(
+            agent,
+            address(0x1234),
+            address(usdc),
+            address(wbtc),
+            MAX_IN,
+            MIN_OUT_PER_MILLION,
+            block.timestamp + 1 days
+        );
+    }
 }
